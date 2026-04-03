@@ -166,7 +166,7 @@ hist_data = df[df['hal_urun_adi'] == selected_product].sort_values('tarih').tail
 
 fig = go.Figure()
 fig.add_trace(go.Scatter(x=hist_data['tarih'], y=hist_data['ortalama_fiyat'], 
-                         name='Fiyatı', line=dict(color='#2E7D32', width=3)))
+                         name='Borsa Fiyatı', line=dict(color='#2E7D32', width=3)))
 hist_data['MA7'] = hist_data['ortalama_fiyat'].rolling(7).mean()
 fig.add_trace(go.Scatter(x=hist_data['tarih'], y=hist_data['MA7'], 
                          name='Haftalık Trend', line=dict(color='#FFA000', width=2, dash='dot')))

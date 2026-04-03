@@ -1,0 +1,35 @@
+name: Daily Data Update
+
+on:
+  schedule:
+    - cron: '0 9 * * *' # Her sabah TSİ 12:00 (UTC 09:00)
+  workflow_dispatch: # Manuel tetikleme için
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y google-chrome-stable
+          pip install -r requirements.txt
+
+      - name: Run Pipeline
+        run: python src/run_pipeline.py
+
+      - name: Commit and Push changes
+        run: |
+          git config --global user.name "GitHub Action"
+          git config --global user.email "action@github.com"
+          git add data/ models/ state.json
+          git commit -m "Automated daily data update [skip ci]" || echo "No changes to commit"
+          git push
