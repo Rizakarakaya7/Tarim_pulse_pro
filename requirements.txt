@@ -1,0 +1,13 @@
+pandas
+numpy
+xgboost
+joblib
+scikit-learn
+plotly
+streamlit
+matplotlib
+yfinance
+pdfplumber
+requests
+selenium
+webdriver-manager
