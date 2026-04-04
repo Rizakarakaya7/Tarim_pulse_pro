@@ -3,7 +3,7 @@ name: Daily Data Update
 on:
   schedule:
     - cron: '0 9 * * *' # Her sabah TSİ 12:00 (UTC 09:00)
-  workflow_dispatch: # Manuel tetikleme için
+  workflow_dispatch: # Manuel tetikleme butonu aktif kalsın
 
 jobs:
   build:
@@ -28,8 +28,8 @@ jobs:
 
       - name: Commit and Push changes
         run: |
-          git config --global user.name "GitHub Action"
-          git config --global user.email "action@github.com"
-          git add data/ models/ state.json
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
           git commit -m "Automated daily data update [skip ci]" || echo "No changes to commit"
           git push
