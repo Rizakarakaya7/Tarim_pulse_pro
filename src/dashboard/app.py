@@ -5,7 +5,7 @@ import plotly.express as px
 import plotly.graph_objects as go
 import os
 import numpy as np
-from datetime import timedelta
+from datetime import timedelta, datetime
 
 # 1. SAYFA AYARLARI
 st.set_page_config(
@@ -103,21 +103,28 @@ if model is None:
     st.error("❌ Veri tabanı veya Model dosyaları eksik. Lütfen pipeline'ı çalıştırın.")
     st.stop()
 
+# --- TARIH REVIZYONU ---
+latest_date_in_data = df['tarih'].max()
+# Eğer bugünün verisi henüz CSV'ye tam işlenmemişse bile projeksiyonu BUGÜN üzerinden yapıyoruz:
+display_date = datetime.now() 
+# -----------------------
+
 # 4. SIDEBAR - ÜRÜN SEÇİMİ
-latest_date = df['tarih'].max()
 st.sidebar.markdown("### 🔍 Arama Merkezi")
 all_products = sorted(df['hal_urun_adi'].unique())
 selected_product = st.sidebar.selectbox("Ürün Seçiniz:", all_products)
 st.sidebar.divider()
-st.sidebar.write(f"📅 **Sistem Tarihi:** {latest_date.date()}")
+st.sidebar.write(f"📅 **Sistem Tarihi:** {display_date.date()}")
 st.sidebar.caption("Haftalık piyasa projeksiyon paneli.")
 
 # 5. HAFTALIK TAHMİN MOTORU
-current_batch = df[df['tarih'] == latest_date].copy()
+# En güncel satırları alıyoruz
+current_batch = df[df['tarih'] == latest_date_in_data].copy()
 future_batch = current_batch.copy()
-future_date = latest_date + timedelta(days=7)
 
-# Projeksiyon Hesaplama
+# Projeksiyon Hesaplama (Bugün + 7 Gün)
+future_date = display_date + timedelta(days=7)
+
 future_batch['tarih'] = future_date
 future_batch['yil'] = future_date.year
 future_batch['ay_no'] = future_date.month
@@ -186,24 +193,24 @@ tab_up, tab_down = st.columns(2)
 with tab_up:
     st.markdown("##### 🚀 Artış Beklenen Ürünler")
     st.dataframe(future_batch.sort_values('degisim', ascending=False).head(8)
-                 [['hal_urun_adi', 'ortalama_fiyat', 'tahmin_fiyat', 'degisim']], 
-                 column_config={
-                     "hal_urun_adi": "Ürün", 
-                     "ortalama_fiyat": "Bugün", 
-                     "tahmin_fiyat": "7 Gün Sonra", 
-                     "degisim": st.column_config.NumberColumn("Değişim %", format="%.2f")
-                 }, hide_index=True, use_container_width=True)
+                  [['hal_urun_adi', 'ortalama_fiyat', 'tahmin_fiyat', 'degisim']], 
+                  column_config={
+                      "hal_urun_adi": "Ürün", 
+                      "ortalama_fiyat": "Bugün", 
+                      "tahmin_fiyat": "7 Gün Sonra", 
+                      "degisim": st.column_config.NumberColumn("Değişim %", format="%.2f")
+                  }, hide_index=True, use_container_width=True)
 
 with tab_down:
     st.markdown("##### 📉 Düşüş Beklenen Ürünler")
     st.dataframe(future_batch.sort_values('degisim', ascending=True).head(8)
-                 [['hal_urun_adi', 'ortalama_fiyat', 'tahmin_fiyat', 'degisim']], 
-                 column_config={
-                     "hal_urun_adi": "Ürün", 
-                     "ortalama_fiyat": "Bugün", 
-                     "tahmin_fiyat": "7 Gün Sonra", 
-                     "degisim": st.column_config.NumberColumn("Değişim %", format="%.2f")
-                 }, hide_index=True, use_container_width=True)
+                  [['hal_urun_adi', 'ortalama_fiyat', 'tahmin_fiyat', 'degisim']], 
+                  column_config={
+                      "hal_urun_adi": "Ürün", 
+                      "ortalama_fiyat": "Bugün", 
+                      "tahmin_fiyat": "7 Gün Sonra", 
+                      "degisim": st.column_config.NumberColumn("Değişim %", format="%.2f")
+                  }, hide_index=True, use_container_width=True)
 
 st.divider()
 st.caption(f"© 2026 TarımPulse Pro | Projeksiyon Tarihi: {future_date.date()}")
