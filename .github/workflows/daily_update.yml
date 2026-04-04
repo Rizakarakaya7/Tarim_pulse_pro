@@ -6,17 +6,17 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: write # Botun depona dosya yüklemesi için şart!
+  contents: write
 
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4 # v3 -> v4 yaptık (Node uyarıları gider)
+        uses: actions/checkout@v4
 
       - name: Set up Python
-        uses: actions/setup-python@v5 # v4 -> v5 yaptık
+        uses: actions/setup-python@v5
         with:
           python-version: '3.11'
 
