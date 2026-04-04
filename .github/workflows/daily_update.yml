@@ -2,18 +2,21 @@ name: Daily Data Update
 
 on:
   schedule:
-    - cron: '0 9 * * *' # Her sabah TSİ 12:00 (UTC 09:00)
-  workflow_dispatch: # Manuel tetikleme butonu aktif kalsın
+    - cron: '0 9 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write # Botun depona dosya yüklemesi için şart!
 
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4 # v3 -> v4 yaptık (Node uyarıları gider)
 
       - name: Set up Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5 # v4 -> v5 yaptık
         with:
           python-version: '3.11'
 
