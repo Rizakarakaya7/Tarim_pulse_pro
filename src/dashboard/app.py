@@ -82,7 +82,7 @@ LE_KAT_PATH = "models/le_kat.pkl"
 FEAT_PATH = "models/feature_list.pkl"
 GOLD_PATH = "data/gold/final_dataset.csv"
 
-@st.cache_resource
+@st.cache_resource(ttl=timedelta(hours=6))
 def load_assets():
     if not all(os.path.exists(p) for p in [MODEL_PATH, LE_URUN_PATH, GOLD_PATH]):
         return None, None, None, None, None

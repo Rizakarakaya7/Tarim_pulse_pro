@@ -11,3 +11,4 @@ pdfplumber
 requests
 selenium
 webdriver-manager
+lxml
